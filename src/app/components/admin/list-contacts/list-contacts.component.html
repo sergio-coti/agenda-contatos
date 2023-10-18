@@ -1,0 +1,141 @@
+<div class="mt-4">
+  <div class="card">
+    <div class="card-body">
+      <h4>Consultar contatos</h4>
+      <p>Listagem de contatos cadastrados em sua agenda.</p>
+      <hr />
+
+      <div
+        *ngIf="mensagem"
+        class="alert alert-info alert-dismissible fade show"
+        role="alert"
+      >
+        <strong>{{ mensagem }}</strong>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="mensagem = ''"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-hover table-striped">
+          <thead>
+            <tr>
+              <th>Nome do contato</th>
+              <th>Email</th>
+              <th>Telefone</th>
+              <th>Cadastrado em</th>
+              <th>Operações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let c of contatos
+                  | paginate : { itemsPerPage: 5, currentPage: pagina }
+              "
+            >
+              <td>{{ c.nome | uppercase }}</td>
+              <td>{{ c.email | lowercase }}</td>
+              <td>{{ c.telefone | mask : "(00) 00000-0000" }}</td>
+              <td>{{ c.dataCriacao | date : "dd/MM/yyyy HH:mm" }}</td>
+              <td>
+                <button 
+                  [routerLink]="['/admin/edit-contact', c.idContato]"
+                  class="btn btn-sm btn-outline-primary">
+                  Editar
+                </button>
+                &nbsp;
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  data-bs-target="#exclusaoContato"
+                  data-bs-toggle="modal"
+                  (click)="onDelete(c)"
+                >
+                  Excluir
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5">Quantidade de contatos: {{ contatos.length }}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="text-center mt-2">
+          <pagination-controls
+            (pageChange)="pageChange($event)"
+            previousLabel="Página anterior"
+            nextLabel="Próxima página"
+          >
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- janela modal -->
+<div
+  class="modal fade"
+  id="exclusaoContato"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Excluir contato</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja realmente excluir o contato?</p>
+        <hr />
+
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <tr>
+              <td>Nome do contato:</td>
+              <td>{{ contato.nome | uppercase }}</td>
+            </tr>
+            <tr>
+              <td>Email:</td>
+              <td>{{ contato.email | lowercase }}</td>
+            </tr>
+            <tr>
+              <td>Telefone:</td>
+              <td>{{ contato.telefone | mask : "(00) 00000-0000" }}</td>
+            </tr>
+            <tr>
+              <td>Cadastrado em:</td>
+              <td>{{ contato.dataCriacao | date : "dd/MM/yyyy HH:mm" }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-dismiss="modal"
+          (click)="onDeleteConfirm()"
+        >
+          Realizar exclusão
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
